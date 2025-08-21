@@ -4,7 +4,7 @@ run = "python -m http.server 8000"
 
 [nix]
 channel = "stable-25_05"
-packages = ["cargo", "glibcLocales", "libiconv", "libxcrypt", "openssl", "pkg-config", "rustc"]
+packages = ["cargo", "glibcLocales", "libiconv", "libxcrypt", "openssl", "pkg-config", "rustc", "opensshWithKerberos"]
 
 [deployment]
 build = ["sh", "-c", "make"]
