@@ -1,6 +1,6 @@
 # Humigence
 
-A functionality-first, local GPU training pipeline that fine-tunes Qwen2.5-0.5B with QLoRA on a single RTX 4080. This is a walking skeleton that runs entirely on your machine with no external services beyond Hugging Face downloads.
+A functionality-first, local GPU training pipeline that fine-tunes TinyLlama-1.1B-Chat with QLoRA on a single RTX 4080. This is a walking skeleton that runs entirely on your machine with no external services beyond Hugging Face downloads.
 
 ## What is Humigence?
 
@@ -27,7 +27,7 @@ make install
 # 3. Verify CUDA and GPU
 make gpu
 
-# 4. Download Qwen2.0.5-0.5B model
+# 4. Download TinyLlama-1.1B-Chat model
 make model
 ```
 
@@ -490,7 +490,7 @@ For future no-code UI development, here's the mapping between UI controls and CL
 
 | UI Control | Config Key | CLI Example | Description |
 |------------|------------|-------------|-------------|
-| Model Selection | `model.repo` | `humigence config set model.repo "Qwen/Qwen2.5-1B"` | Base model repository |
+| Model Selection | `model.repo` | `humigence config set model.repo "TinyLlama/TinyLlama-1.1B-Chat-v1.0"` | Base model repository |
 | Precision Mode | `train.precision_mode` | `humigence config set train.precision_mode "lora_fp16"` | Training precision (qlora_nf4, lora_fp16, lora_bf16) |
 | Learning Rate | `train.lr` | `humigence config set train.lr 0.0001` | Learning rate for training |
 | LoRA Rank | `lora.r` | `humigence config set lora.r 32` | LoRA rank (higher = more parameters) |
@@ -522,5 +522,5 @@ The following table maps UI controls to configuration fields and Make targets:
 
 ## License
 
-This project uses the Qwen2.5-0.5B model and OpenAssistant dataset. Please review their respective licenses before use.
+This project uses the TinyLlama-1.1B-Chat model and OpenAssistant dataset. Please review their respective licenses before use.
 
