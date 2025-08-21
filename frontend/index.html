@@ -82,73 +82,129 @@
             <div id="step-1" class="wizard-step active">
                 <div class="step-card">
                     <div class="step-header">
-                        <h3 class="step-title">Mode & Essentials</h3>
+                        <h3 class="step-title">Mode & Essentials <span id="mode-indicator" class="mode-indicator basic">Basic</span></h3>
                         <p class="step-description">Pick your setup mode and configure the essential parameters to get started.</p>
                     </div>
 
                     <div class="step-content">
-                        <div class="form-group">
-                            <label for="setup-mode" class="form-label">Setup mode</label>
-                            <select id="setup-mode" class="form-select">
-                                <option value="basic">Basic (essentials only)</option>
-                                <option value="advanced">Advanced (full control)</option>
-                            </select>
+                        <!-- Tab Navigation -->
+                        <div class="tab-nav">
+                            <button id="tab-basic" class="tab-btn active">Basic</button>
+                            <button id="tab-advanced" class="tab-btn">Advanced</button>
                         </div>
 
-                        <div class="form-group">
-                            <label for="gpu-device" class="form-label">GPU device</label>
-                            <select id="gpu-device" class="form-select">
-                                <option value="GPU0: RTX 4080 16GB">GPU0: RTX 4080 16GB</option>
-                                <option value="GPU1: (disabled)" disabled>GPU1 (disabled if not present)</option>
-                            </select>
-                        </div>
+                        <!-- Basic Tab Content -->
+                        <div id="basic-content" class="tab-content active">
+                            <div class="form-group">
+                                <label for="gpu-device" class="form-label">Select GPU Device</label>
+                                <select id="gpu-device" class="form-select">
+                                    <option value="cuda:0">NVIDIA RTX 4080 16GB (cuda:0)</option>
+                                    <option value="rtx-4090" disabled>NVIDIA RTX 4090 24GB (coming soon)</option>
+                                    <option value="rtx-5090" disabled>NVIDIA RTX 5090 32GB (coming soon)</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="base-model" class="form-label">Base model</label>
-                            <select id="base-model" class="form-select">
-                                <option value="TinyLlama/TinyLlama-1.1B-Chat-v1.0">TinyLlama/TinyLlama-1.1B-Chat-v1.0</option>
-                                <option value="llama-3-8b-instruct" disabled>llama-3-8b-instruct (coming soon)</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label for="base-model" class="form-label">Choose Base Model</label>
+                                <select id="base-model" class="form-select">
+                                    <option value="TinyLlama/TinyLlama-1.1B-Chat-v1.0">TinyLlama/TinyLlama-1.1B-Chat-v1.0</option>
+                                    <option value="llama-3-8b-instruct" disabled>llama-3-8b-instruct (coming soon)</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="dataset-source" class="form-label">Dataset source</label>
-                            <select id="dataset-source" class="form-select">
-                                <option value="Bundled OpenAssist Demo">Bundled OpenAssist Demo</option>
-                                <option value="Local JSONL File">Local JSONL File</option>
-                                <option value="Generate Tiny Demo">Generate Tiny Demo</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label for="download-model" class="form-label">Download model if missing</label>
+                                <select id="download-model" class="form-select">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
 
-                        <div id="file-input-group" class="form-group" style="display: none;">
-                            <label for="file-path" class="form-label">File path</label>
-                            <div class="file-input-wrapper">
-                                <input type="text" id="file-path" class="form-input" placeholder="data/raw/oa.jsonl" value="data/raw/oa.jsonl">
-                                <button type="button" class="btn btn-secondary file-picker-btn">Browse</button>
+                            <div class="form-group">
+                                <label for="dataset-source" class="form-label">Dataset Source</label>
+                                <select id="dataset-source" class="form-select">
+                                    <option value="Bundled OpenAssist Demo">Bundled OpenAssist Demo</option>
+                                    <option value="Local JSONL File">Local JSONL File</option>
+                                    <option value="Generate Tiny Demo">Generate Tiny Demo</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="precision-mode-basic" class="form-label">Precision Mode</label>
+                                <select id="precision-mode-basic" class="form-select">
+                                    <option value="qlora_nf4">qlora_nf4</option>
+                                    <option value="lora_fp16">lora_fp16</option>
+                                    <option value="lora_bf16">lora_bf16</option>
+                                    <option value="lora_int8">lora_int8</option>
+                                </select>
+                            </div>
+
+                            <div id="file-input-group" class="form-group" style="display: none;">
+                                <label for="file-path" class="form-label">File path</label>
+                                <div class="file-input-wrapper">
+                                    <input type="text" id="file-path" class="form-input" placeholder="Select a file or paste a path" readonly>
+                                    <button type="button" class="btn btn-secondary" id="file-browse-btn">Browse</button>
+                                    <input type="file" id="file-input" class="hidden" accept=".jsonl,.json,.txt">
+                                </div>
+                                <small class="form-hint">Choose a local file or paste a path/URL. Upload is handled elsewhere.</small>
+                            </div>
+
+                            <div class="basic-footer">
+                                <p class="basic-note">Training will use optimized defaults for data processing, learning parameters, and LoRA settings.</p>
+                                <button id="basic-start-training" class="btn btn-success">Start Training</button>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="dataset-schema" class="form-label">Dataset schema</label>
-                            <select id="dataset-schema" class="form-select">
-                                <option value="chat_messages">chat_messages</option>
-                                <option value="instruction_output">instruction_output</option>
-                            </select>
-                        </div>
+                        <!-- Advanced Tab Content -->
+                        <div id="advanced-content" class="tab-content">
+                            <div class="form-group">
+                                <label for="gpu-device-adv" class="form-label">GPU device</label>
+                                <select id="gpu-device-adv" class="form-select">
+                                    <option value="cuda:0">NVIDIA RTX 4080 16GB (cuda:0)</option>
+                                    <option value="rtx-4090" disabled>NVIDIA RTX 4090 24GB (coming soon)</option>
+                                    <option value="rtx-5090" disabled>NVIDIA RTX 5090 32GB (coming soon)</option>
+                                </select>
+                            </div>
 
-                        <div class="form-group">
-                            <label for="precision-mode" class="form-label">Precision mode</label>
-                            <select id="precision-mode" class="form-select">
-                                <option value="qlora_nf4">qlora_nf4</option>
-                                <option value="lora_fp16">lora_fp16</option>
-                                <option value="lora_bf16">lora_bf16</option>
-                                <option value="lora_int8">lora_int8</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label for="base-model-adv" class="form-label">Base model</label>
+                                <select id="base-model-adv" class="form-select">
+                                    <option value="TinyLlama/TinyLlama-1.1B-Chat-v1.0">TinyLlama/TinyLlama-1.1B-Chat-v1.0</option>
+                                    <option value="llama-3-8b-instruct" disabled>llama-3-8b-instruct (coming soon)</option>
+                                </select>
+                            </div>
 
-                        <div class="step-footer">
-                            <p class="footer-note">Training is disabled by default. You can enable it later.</p>
-                            <button id="step-1-continue" class="btn btn-primary" disabled>Continue</button>
+                            <div class="form-group">
+                                <label for="dataset-source-adv" class="form-label">Dataset source</label>
+                                <select id="dataset-source-adv" class="form-select">
+                                    <option value="Bundled OpenAssist Demo">Bundled OpenAssist Demo</option>
+                                    <option value="Local JSONL File">Local JSONL File</option>
+                                    <option value="Generate Tiny Demo">Generate Tiny Demo</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dataset-schema" class="form-label">Dataset schema</label>
+                                <select id="dataset-schema" class="form-select">
+                                    <option value="chat_messages">chat_messages</option>
+                                    <option value="instruction_output">instruction_output</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="precision-mode" class="form-label">Precision mode</label>
+                                <select id="precision-mode" class="form-select">
+                                    <option value="qlora_nf4">qlora_nf4</option>
+                                    <option value="lora_fp16">lora_fp16</option>
+                                    <option value="lora_bf16">lora_bf16</option>
+                                    <option value="lora_int8">lora_int8</option>
+                                </select>
+                            </div>
+
+                            <div class="step-footer">
+                                <p class="footer-note">Training is disabled by default. You can enable it later.</p>
+                                <button id="step-1-continue" class="btn btn-primary">Continue</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -159,36 +215,36 @@
                 <div class="step-card">
                     <div class="step-header">
                         <h3 class="step-title">Data Details</h3>
-                        <p class="step-description">Refine your data configuration for optimal training performance.</p>
+                        <p class="step-description" id="step-2-description">Refine your data configuration for optimal training performance.</p>
                     </div>
 
                     <div class="step-content">
-                        <div class="form-group">
-                            <label for="max-seq-len" class="form-label">Max sequence length</label>
+                        <div class="form-group" data-setup="advanced">
+                            <label for="max-seq-len" class="form-label">Max sequence length <span class="advanced-badge">Advanced</span></label>
                             <select id="max-seq-len" class="form-select">
                                 <option value="1024">1024</option>
                                 <option value="2048">2048</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="packing" class="form-label">Packing</label>
+                        <div class="form-group" data-setup="advanced">
+                            <label for="packing" class="form-label">Packing <span class="advanced-badge">Advanced</span></label>
                             <select id="packing" class="form-select">
                                 <option value="on">on</option>
                                 <option value="off">off</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label for="template" class="form-label">Template</label>
+                        <div class="form-group" data-setup="advanced">
+                            <label for="template" class="form-label">Template <span class="advanced-badge">Advanced</span></label>
                             <select id="template" class="form-select">
                                 <option value="qwen_chat_basic_v1">qwen_chat_basic_v1</option>
                                 <option value="open_chat_basic_v1">open_chat_basic_v1</option>
                             </select>
                         </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Split ratios</label>
+                        <div class="form-group" data-setup="advanced">
+                            <label class="form-label">Split ratios <span class="advanced-badge">Advanced</span></label>
                             <div class="split-ratios">
                                 <div class="split-item">
                                     <label for="train-split" class="split-label">Train</label>
@@ -230,7 +286,7 @@
                 <div class="step-card">
                     <div class="step-header">
                         <h3 class="step-title">Training Plan</h3>
-                        <p class="step-description">Define your training parameters safely with sensible defaults.</p>
+                        <p class="step-description" id="step-3-description">Define your training parameters safely with sensible defaults.</p>
                     </div>
 
                     <div class="step-content">
@@ -242,9 +298,9 @@
                             </select>
                         </div>
 
-                        <div class="form-row">
+                        <div class="form-row" data-setup="advanced">
                             <div class="form-group">
-                                <label for="learning-rate" class="form-label">Learning rate</label>
+                                <label for="learning-rate" class="form-label">Learning rate <span class="advanced-badge">Advanced</span></label>
                                 <select id="learning-rate" class="form-select">
                                     <option value="1e-4">1e-4</option>
                                     <option value="2e-4">2e-4</option>
@@ -253,7 +309,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="warmup-ratio" class="form-label">Warmup ratio</label>
+                                <label for="warmup-ratio" class="form-label">Warmup ratio <span class="advanced-badge">Advanced</span></label>
                                 <select id="warmup-ratio" class="form-select">
                                     <option value="0.03">0.03</option>
                                     <option value="0.05">0.05</option>
@@ -261,9 +317,9 @@
                             </div>
                         </div>
 
-                        <div class="form-row">
+                        <div class="form-row" data-setup="advanced">
                             <div class="form-group">
-                                <label for="weight-decay" class="form-label">Weight decay</label>
+                                <label for="weight-decay" class="form-label">Weight decay <span class="advanced-badge">Advanced</span></label>
                                 <select id="weight-decay" class="form-select">
                                     <option value="0.0">0.0</option>
                                     <option value="0.01">0.01</option>
@@ -271,7 +327,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="scheduler" class="form-label">Scheduler</label>
+                                <label for="scheduler" class="form-label">Scheduler <span class="advanced-badge">Advanced</span></label>
                                 <select id="scheduler" class="form-select">
                                     <option value="cosine">cosine</option>
                                     <option value="linear">linear</option>
@@ -288,8 +344,8 @@
                             </select>
                         </div>
 
-                        <div id="lora-section" class="form-section">
-                            <h4 class="section-title">LoRA Settings</h4>
+                        <div id="lora-section" class="form-section" data-setup="advanced">
+                            <h4 class="section-title">LoRA Settings <span class="advanced-badge">Advanced</span></h4>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="lora-rank" class="form-label">Rank</label>
