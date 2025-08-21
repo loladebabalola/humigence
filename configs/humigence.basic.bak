@@ -1,0 +1,75 @@
+{
+  "project": "humigence",
+  "seed": 42,
+  "model": {
+    "repo": "Qwen/Qwen2.5-0.5B",
+    "local_path": null,
+    "use_flash_attn": true
+  },
+  "compute": {
+    "gpus": 1,
+    "gpu_type": "RTX_4080_16GB"
+  },
+  "data": {
+    "raw_path": "data/raw/oa.jsonl",
+    "processed_dir": "data/processed",
+    "data_schema": "chat_messages",
+    "max_seq_len": 1024,
+    "packing": true,
+    "split": {
+      "train": 0.8,
+      "val": 0.1,
+      "test": 0.1
+    },
+    "template": "qwen_chat_basic_v1"
+  },
+  "train": {
+    "precision_mode": "lora_fp16",
+    "lr": 0.0002,
+    "scheduler": "cosine",
+    "warmup_ratio": 0.03,
+    "weight_decay": 0.0,
+    "grad_clip": 1.0,
+    "gradient_checkpointing": true,
+    "tokens_per_step_target": 100000,
+    "eval_every_steps": 500,
+    "save_every_steps": 500,
+    "epochs": "auto_\u22481",
+    "lora": {
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "up_proj",
+        "down_proj",
+        "gate_proj"
+      ],
+      "r": 16,
+      "alpha": 32,
+      "dropout": 0.05
+    },
+    "early_stopping": {
+      "metric": "val_loss",
+      "patience": 3,
+      "min_delta": 0.002
+    }
+  },
+  "eval": {
+    "primary_metric": "val_loss",
+    "curated_prompts_path": "configs/curated_eval_prompts.jsonl",
+    "temperature_low": 0.2,
+    "temperature_high": 0.7
+  },
+  "acceptance": {
+    "min_val_improvement_pct": 1.0,
+    "throughput_jitter_pct": 20.0,
+    "curated_reasonable_threshold_pct": 70.0
+  },
+  "export": {
+    "artifacts_dir": "artifacts/humigence",
+    "formats": [
+      "peft_adapter"
+    ]
+  }
+}
