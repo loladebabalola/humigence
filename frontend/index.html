@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humigence - Local MLOps Suite</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Toast notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Hero Landing Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-logo">humigence</h1>
+                <h2 class="hero-title">Your AI. Your pipeline. Zero code.<br>A complete MLOps suite built for makers, teams, and enterprises.</h2>
+                <p class="hero-subtitle">Local-first MLOps. Configure, plan, validate — then train when you're ready.</p>
+                <button id="get-started-btn" class="btn btn-primary btn-large">Get Started</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Progressive Wizard -->
+    <section id="wizard-section" class="wizard-section">
+        <!-- Progress Bar -->
+        <div class="progress-container sticky">
+            <div class="container">
+                <div class="progress-bar">
+                    <div class="progress-step active" data-step="1">
+                        <div class="step-indicator">
+                            <span class="step-number">1</span>
+                            <svg class="step-check hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span class="step-label">Mode & Essentials</span>
+                    </div>
+                    <div class="progress-step" data-step="2">
+                        <div class="step-indicator">
+                            <span class="step-number">2</span>
+                            <svg class="step-check hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span class="step-label">Data Details</span>
+                    </div>
+                    <div class="progress-step" data-step="3">
+                        <div class="step-indicator">
+                            <span class="step-number">3</span>
+                            <svg class="step-check hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span class="step-label">Training Plan</span>
+                    </div>
+                    <div class="progress-step" data-step="4">
+                        <div class="step-indicator">
+                            <span class="step-number">4</span>
+                            <svg class="step-check hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span class="step-label">Validate</span>
+                    </div>
+                    <div class="progress-step" data-step="5">
+                        <div class="step-indicator">
+                            <span class="step-number">5</span>
+                            <svg class="step-check hidden" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <span class="step-label">Review & Run</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Step 1: Mode & Essentials -->
+            <div id="step-1" class="wizard-step active">
+                <div class="step-card">
+                    <div class="step-header">
+                        <h3 class="step-title">Mode & Essentials</h3>
+                        <p class="step-description">Pick your setup mode and configure the essential parameters to get started.</p>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="form-group">
+                            <label for="setup-mode" class="form-label">Setup mode</label>
+                            <select id="setup-mode" class="form-select">
+                                <option value="basic">Basic (essentials only)</option>
+                                <option value="advanced">Advanced (full control)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="gpu-device" class="form-label">GPU device</label>
+                            <select id="gpu-device" class="form-select">
+                                <option value="GPU0: RTX 4080 16GB">GPU0: RTX 4080 16GB</option>
+                                <option value="GPU1: (disabled)" disabled>GPU1 (disabled if not present)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="base-model" class="form-label">Base model</label>
+                            <select id="base-model" class="form-select">
+                                <option value="TinyLlama/TinyLlama-1.1B-Chat-v1.0">TinyLlama/TinyLlama-1.1B-Chat-v1.0</option>
+                                <option value="llama-3-8b-instruct" disabled>llama-3-8b-instruct (coming soon)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dataset-source" class="form-label">Dataset source</label>
+                            <select id="dataset-source" class="form-select">
+                                <option value="Bundled OpenAssist Demo">Bundled OpenAssist Demo</option>
+                                <option value="Local JSONL File">Local JSONL File</option>
+                                <option value="Generate Tiny Demo">Generate Tiny Demo</option>
+                            </select>
+                        </div>
+
+                        <div id="file-input-group" class="form-group" style="display: none;">
+                            <label for="file-path" class="form-label">File path</label>
+                            <div class="file-input-wrapper">
+                                <input type="text" id="file-path" class="form-input" placeholder="data/raw/oa.jsonl" value="data/raw/oa.jsonl">
+                                <button type="button" class="btn btn-secondary file-picker-btn">Browse</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dataset-schema" class="form-label">Dataset schema</label>
+                            <select id="dataset-schema" class="form-select">
+                                <option value="chat_messages">chat_messages</option>
+                                <option value="instruction_output">instruction_output</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="precision-mode" class="form-label">Precision mode</label>
+                            <select id="precision-mode" class="form-select">
+                                <option value="qlora_nf4">qlora_nf4</option>
+                                <option value="lora_fp16">lora_fp16</option>
+                                <option value="lora_bf16">lora_bf16</option>
+                                <option value="lora_int8">lora_int8</option>
+                            </select>
+                        </div>
+
+                        <div class="step-footer">
+                            <p class="footer-note">Training is disabled by default. You can enable it later.</p>
+                            <button id="step-1-continue" class="btn btn-primary" disabled>Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Data Details -->
+            <div id="step-2" class="wizard-step hidden">
+                <div class="step-card">
+                    <div class="step-header">
+                        <h3 class="step-title">Data Details</h3>
+                        <p class="step-description">Refine your data configuration for optimal training performance.</p>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="form-group">
+                            <label for="max-seq-len" class="form-label">Max sequence length</label>
+                            <select id="max-seq-len" class="form-select">
+                                <option value="1024">1024</option>
+                                <option value="2048">2048</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="packing" class="form-label">Packing</label>
+                            <select id="packing" class="form-select">
+                                <option value="on">on</option>
+                                <option value="off">off</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="template" class="form-label">Template</label>
+                            <select id="template" class="form-select">
+                                <option value="qwen_chat_basic_v1">qwen_chat_basic_v1</option>
+                                <option value="open_chat_basic_v1">open_chat_basic_v1</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Split ratios</label>
+                            <div class="split-ratios">
+                                <div class="split-item">
+                                    <label for="train-split" class="split-label">Train</label>
+                                    <select id="train-split" class="form-select">
+                                        <option value="70">70%</option>
+                                        <option value="80" selected>80%</option>
+                                        <option value="90">90%</option>
+                                    </select>
+                                </div>
+                                <div class="split-item">
+                                    <label for="val-split" class="split-label">Val</label>
+                                    <select id="val-split" class="form-select">
+                                        <option value="5">5%</option>
+                                        <option value="10" selected>10%</option>
+                                        <option value="15">15%</option>
+                                    </select>
+                                </div>
+                                <div class="split-item">
+                                    <label for="test-split" class="split-label">Test</label>
+                                    <select id="test-split" class="form-select">
+                                        <option value="5">5%</option>
+                                        <option value="10" selected>10%</option>
+                                        <option value="15">15%</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p class="validation-text" id="split-validation"></p>
+                        </div>
+
+                        <div class="step-footer">
+                            <button id="step-2-continue" class="btn btn-primary" disabled>Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Training Plan -->
+            <div id="step-3" class="wizard-step hidden">
+                <div class="step-card">
+                    <div class="step-header">
+                        <h3 class="step-title">Training Plan</h3>
+                        <p class="step-description">Define your training parameters safely with sensible defaults.</p>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="form-group">
+                            <label for="training-toggle" class="form-label">Training toggle</label>
+                            <select id="training-toggle" class="form-select">
+                                <option value="disabled">disabled</option>
+                                <option value="enabled">enabled</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="learning-rate" class="form-label">Learning rate</label>
+                                <select id="learning-rate" class="form-select">
+                                    <option value="1e-4">1e-4</option>
+                                    <option value="2e-4">2e-4</option>
+                                    <option value="5e-5">5e-5</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="warmup-ratio" class="form-label">Warmup ratio</label>
+                                <select id="warmup-ratio" class="form-select">
+                                    <option value="0.03">0.03</option>
+                                    <option value="0.05">0.05</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="weight-decay" class="form-label">Weight decay</label>
+                                <select id="weight-decay" class="form-select">
+                                    <option value="0.0">0.0</option>
+                                    <option value="0.01">0.01</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="scheduler" class="form-label">Scheduler</label>
+                                <select id="scheduler" class="form-select">
+                                    <option value="cosine">cosine</option>
+                                    <option value="linear">linear</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="epochs" class="form-label">Epochs</label>
+                            <select id="epochs" class="form-select">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+
+                        <div id="lora-section" class="form-section">
+                            <h4 class="section-title">LoRA Settings</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="lora-rank" class="form-label">Rank</label>
+                                    <select id="lora-rank" class="form-select">
+                                        <option value="8">8</option>
+                                        <option value="16">16</option>
+                                        <option value="32">32</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="lora-alpha" class="form-label">Alpha</label>
+                                    <select id="lora-alpha" class="form-select">
+                                        <option value="16">16</option>
+                                        <option value="32">32</option>
+                                        <option value="64">64</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="lora-dropout" class="form-label">Dropout</label>
+                                    <select id="lora-dropout" class="form-select">
+                                        <option value="0.0">0.0</option>
+                                        <option value="0.05">0.05</option>
+                                        <option value="0.1">0.1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="training-notice" class="info-note hidden">
+                            <svg class="info-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            Training will require explicit consent before running.
+                        </div>
+
+                        <div class="step-footer">
+                            <button id="step-3-continue" class="btn btn-primary">Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Validate -->
+            <div id="step-4" class="wizard-step hidden">
+                <div class="step-card">
+                    <div class="step-header">
+                        <h3 class="step-title">Validate</h3>
+                        <p class="step-description">Generate your training plan and run validation checks.</p>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="actions-row">
+                            <button id="generate-plan-btn" class="btn btn-primary">Generate Plan</button>
+                            <button id="run-validation-btn" class="btn btn-secondary">Run Validation</button>
+                        </div>
+
+                        <div class="validation-checks">
+                            <div class="check-item">
+                                <svg class="check-icon check-warning" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Dataset path present</span>
+                            </div>
+                            <div class="check-item">
+                                <svg class="check-icon check-warning" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Model available (will auto-download)</span>
+                            </div>
+                            <div class="check-item">
+                                <svg class="check-icon check-warning" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Training disabled by default</span>
+                            </div>
+                            <div class="check-item">
+                                <svg class="check-icon check-warning" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                <span>Config valid</span>
+                            </div>
+                        </div>
+
+                        <div class="step-footer">
+                            <button id="step-4-continue" class="btn btn-primary" disabled>Continue</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Review & Run -->
+            <div id="step-5" class="wizard-step hidden">
+                <div class="step-card">
+                    <div class="step-header">
+                        <h3 class="step-title">Review & Run</h3>
+                        <p class="step-description">Review your configuration and execute your training plan.</p>
+                    </div>
+
+                    <div class="step-content">
+                        <div class="preview-grid">
+                            <!-- JSON Config Preview -->
+                            <div class="preview-panel">
+                                <h4 class="panel-title">JSON Config Preview</h4>
+                                <pre id="json-preview" class="code-block"><code>{
+  "project": "myproject",
+  "compute": { "gpu": "GPU0: RTX 4080 16GB" },
+  "model": { "repo": "TinyLlama/TinyLlama-1.1B-Chat-v1.0", "precision_mode": "qlora_nf4" },
+  "data": { "raw_path": "data/raw/oa.jsonl", "schema": "chat_messages", "max_seq_len": 1024, "packing": true, "template": "qwen_chat_basic_v1", "splits": { "train": 80, "val": 10, "test": 10 } },
+  "train": { "lr": 0.0001, "warmup_ratio": 0.05, "weight_decay": 0.01, "scheduler": "cosine", "epochs": 2, "lora": { "r": 16, "alpha": 32, "dropout": 0.05 } },
+  "eval": { "curated_prompts_path": "configs/curated_eval_prompts.jsonl", "sampling": "off" }
+}</code></pre>
+                            </div>
+
+                            <!-- Command Preview -->
+                            <div class="preview-panel">
+                                <h4 class="panel-title">Command Preview</h4>
+                                <div id="command-preview" class="code-block">
+                                    <div class="command-section">
+                                        <code>humigence init --mode basic --run plan</code>
+                                        <div class="command-comment"># then (optional, to train):</div>
+                                        <code>TRAIN=1 humigence init --mode basic --run pipeline</code>
+                                        <div class="command-separator"></div>
+                                        <div class="command-comment"># Make targets:</div>
+                                        <code>make setup-basic</code>
+                                        <code>make setup-advanced</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="final-actions">
+                            <button id="final-plan-btn" class="btn btn-primary">Plan</button>
+                            <button id="final-validate-btn" class="btn btn-secondary">Validate</button>
+                            <button id="final-train-btn" class="btn btn-primary">Train</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+<script src="app.js"></script>
+</html>
