@@ -1,3 +1,4 @@
+const API_BASE = '/api';
 // Application state
 const state = {
     currentStep: 1,
