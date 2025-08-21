@@ -1,0 +1,15 @@
+modules = ["python-3.10"]
+compile = "make"
+run = "python -m http.server 8000"
+
+[nix]
+channel = "stable-25_05"
+packages = ["cargo", "glibcLocales", "libiconv", "libxcrypt", "openssl", "pkg-config", "rustc"]
+
+[deployment]
+build = ["sh", "-c", "make"]
+run = ["sh", "-c", "python -m http.server 8000"]
+
+[[ports]]
+localPort = 8000
+externalPort = 80
