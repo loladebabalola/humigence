@@ -1,4 +1,38 @@
-const API_BASE = '/api';
+// Constants for default values
+const DEFAULTS_FOR_BASIC = {
+    'epochs': '3',
+    'learning-rate': '', // Always start empty as per spec
+    'warmup-ratio': '0.03',
+    'weight-decay': '0',
+    'scheduler': 'linear',
+    'max-seq-len': '2048',
+    'packing': 'on',
+    'template': 'qwen_chat_basic_v1',
+    'train-split': '80',
+    'val-split': '10',
+    'test-split': '10',
+    'lora-rank': '8',
+    'lora-alpha': '16',
+    'lora-dropout': '0.05',
+    'dataset-schema': 'chat_messages',
+    'precision-mode': 'qlora_nf4'
+};
+
+// Function to prefill advanced defaults when in Basic mode
+function prefillAdvancedDefaults() {
+    for (const [fieldId, value] of Object.entries(DEFAULTS_FOR_BASIC)) {
+        const element = document.getElementById(fieldId);
+        if (element && fieldId !== 'learning-rate') {
+            element.value = value;
+        }
+    }
+    // Always keep learning rate empty
+    const learningRate = document.getElementById('learning-rate');
+    if (learningRate) {
+        learningRate.value = '';
+    }
+}
+
 // Application state
 const state = {
     currentStep: 1,
@@ -169,12 +203,9 @@ function unlockNextStep() {
 }
 
 function validateStep1() {
-    const mode = document.getElementById('setup-mode').value;
     const gpu = document.getElementById('gpu-device').value;
     const model = document.getElementById('base-model').value;
     const datasetSource = document.getElementById('dataset-source').value;
-    const schema = document.getElementById('dataset-schema').value;
-    const precision = document.getElementById('precision-mode').value;
     
     let isValid = true;
     
@@ -193,13 +224,21 @@ function validateStep1() {
 }
 
 function validateStep2() {
+    const continueBtn = document.getElementById('step-2-continue');
+    
+    // In basic mode, skip validation since advanced fields are hidden
+    if (state.mode === 'basic') {
+        continueBtn.disabled = false;
+        return true;
+    }
+    
+    // In advanced mode, validate split ratios
     const trainSplit = parseInt(document.getElementById('train-split').value);
     const valSplit = parseInt(document.getElementById('val-split').value);
     const testSplit = parseInt(document.getElementById('test-split').value);
     
     const total = trainSplit + valSplit + testSplit;
     const validationText = document.getElementById('split-validation');
-    const continueBtn = document.getElementById('step-2-continue');
     
     if (total === 100) {
         validationText.textContent = `✓ Total: ${total}% (valid)`;
@@ -222,10 +261,15 @@ function validateStep4() {
 
 function updateConfigFromForm() {
     // Step 1 - Mode & Essentials
-    state.mode = document.getElementById('setup-mode').value;
-    state.config.compute.gpu = document.getElementById('gpu-device').value;
-    state.config.model.repo = document.getElementById('base-model').value;
-    state.config.model.precision_mode = document.getElementById('precision-mode').value;
+    if (state.mode === 'basic') {
+        state.config.compute.gpu = document.getElementById('gpu-device').value;
+        state.config.model.repo = document.getElementById('base-model').value;
+        state.config.model.precision_mode = document.getElementById('precision-mode-basic').value;
+    } else {
+        state.config.compute.gpu = document.getElementById('gpu-device-adv').value;
+        state.config.model.repo = document.getElementById('base-model-adv').value;
+        state.config.model.precision_mode = document.getElementById('precision-mode').value;
+    }
     
     const datasetSource = document.getElementById('dataset-source').value;
     if (datasetSource === 'Local JSONL File') {
@@ -273,6 +317,127 @@ function handleDatasetSourceChange() {
     }
     
     validateStep1();
+}
+
+function handleTabSwitch(tabName) {
+    console.log('Switching to tab:', tabName);
+    
+    // Direct DOM manipulation - no setTimeout needed
+    const basicTab = document.getElementById('tab-basic');
+    const advancedTab = document.getElementById('tab-advanced');
+    const basicContent = document.getElementById('basic-content');
+    const advancedContent = document.getElementById('advanced-content');
+    
+    console.log('Elements found:', { basicTab, advancedTab, basicContent, advancedContent });
+    console.log('Basic content element:', basicContent ? 'FOUND' : 'NOT FOUND');
+    console.log('Advanced content element:', advancedContent ? 'FOUND' : 'NOT FOUND');
+    console.log('DOM query check - basic:', document.querySelector('#basic-content'));
+    console.log('DOM query check - advanced:', document.querySelector('#advanced-content'));
+    
+    // Remove active from all tabs and content
+    if (basicTab) basicTab.classList.remove('active');
+    if (advancedTab) advancedTab.classList.remove('active');
+    if (basicContent) basicContent.classList.remove('active');
+    if (advancedContent) advancedContent.classList.remove('active');
+    
+    // Activate the selected tab with both classes and inline styles
+    if (tabName === 'basic') {
+        if (basicTab) basicTab.classList.add('active');
+        if (basicContent) {
+            basicContent.classList.add('active');
+            basicContent.style.display = 'block';
+        }
+        if (advancedContent) {
+            advancedContent.style.display = 'none';
+        }
+    } else if (tabName === 'advanced') {
+        if (advancedTab) advancedTab.classList.add('active');
+        if (advancedContent) {
+            advancedContent.classList.add('active');
+            advancedContent.style.display = 'block';
+        }
+        if (basicContent) {
+            basicContent.style.display = 'none';
+        }
+    }
+    
+    // Update mode indicator
+    const modeIndicator = document.getElementById('mode-indicator');
+    if (modeIndicator) {
+        modeIndicator.textContent = tabName === 'basic' ? 'Basic' : 'Advanced';
+        modeIndicator.className = tabName === 'basic' ? 'mode-indicator basic' : 'mode-indicator';
+    }
+    
+    // Update state
+    state.mode = tabName;
+    
+    if (tabName === 'basic') {
+        // Hide other steps and progress bar in Basic mode
+        document.getElementById('step-2').classList.add('hidden');
+        document.getElementById('step-3').classList.add('hidden');
+        document.getElementById('step-4').classList.add('hidden');
+        document.getElementById('step-5').classList.add('hidden');
+        document.querySelector('.progress-bar').classList.add('hidden');
+        
+        // Apply defaults for basic mode
+        prefillAdvancedDefaults();
+    } else {
+        // Show all steps and progress bar in Advanced mode
+        document.getElementById('step-2').classList.remove('hidden');
+        document.getElementById('step-3').classList.remove('hidden');
+        document.getElementById('step-4').classList.remove('hidden');
+        document.getElementById('step-5').classList.remove('hidden');
+        document.querySelector('.progress-bar').classList.remove('hidden');
+    }
+    
+    // Update previews
+    updateConfigFromForm();
+    updateJsonPreview();
+    updateCommandPreview();
+    
+    showToast(`Switched to ${tabName === 'basic' ? 'Basic' : 'Advanced'} mode`);
+    console.log('Tab switch complete - Basic display:', basicContent ? basicContent.style.display : 'N/A');
+    console.log('Tab switch complete - Advanced display:', advancedContent ? advancedContent.style.display : 'N/A');
+}
+
+function setupFileBrowser() {
+    const fileInput = document.getElementById('file-input');
+    const browseBtn = document.getElementById('file-browse-btn');
+    const filePathInput = document.getElementById('file-path');
+    
+    if (!fileInput || !browseBtn || !filePathInput) return;
+    
+    browseBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Show only filename, not full path for security
+            filePathInput.value = file.name;
+            filePathInput.removeAttribute('readonly');
+            filePathInput.setAttribute('placeholder', 'File selected: ' + file.name);
+            validateStep1();
+        }
+    });
+    
+    // Allow manual editing of file path
+    filePathInput.addEventListener('click', () => {
+        if (filePathInput.hasAttribute('readonly')) {
+            filePathInput.removeAttribute('readonly');
+            filePathInput.focus();
+        }
+    });
+    
+    filePathInput.addEventListener('blur', () => {
+        if (!filePathInput.value.trim()) {
+            filePathInput.setAttribute('readonly', '');
+            filePathInput.value = '';
+            filePathInput.setAttribute('placeholder', 'Select a file or paste a path');
+        }
+        validateStep1();
+    });
 }
 
 function handleTrainingToggleChange() {
@@ -324,10 +489,28 @@ function setupEventListeners() {
         smoothScrollTo(elements.wizardSection);
     });
     
+    // Tab buttons
+    const tabBasic = document.getElementById('tab-basic');
+    const tabAdvanced = document.getElementById('tab-advanced');
+    
+    if (tabBasic && tabAdvanced) {
+        tabBasic.addEventListener('click', () => {
+            console.log('Basic tab clicked');
+            handleTabSwitch('basic');
+        });
+        tabAdvanced.addEventListener('click', () => {
+            console.log('Advanced tab clicked');
+            handleTabSwitch('advanced');
+        });
+    } else {
+        console.error('Tab buttons not found:', { tabBasic, tabAdvanced });
+    }
+    
     // Step 1 form elements
     const step1Elements = [
-        'setup-mode', 'gpu-device', 'base-model', 'dataset-source', 
-        'dataset-schema', 'precision-mode', 'file-path'
+        'gpu-device', 'base-model', 'download-model', 'dataset-source', 
+        'dataset-schema', 'precision-mode', 'precision-mode-basic', 'file-path',
+        'gpu-device-adv', 'base-model-adv', 'dataset-source-adv'
     ];
     
     step1Elements.forEach(id => {
@@ -477,20 +660,21 @@ function setupEventListeners() {
         }, 500);
     });
     
-    // File picker buttons (demo only)
-    document.querySelectorAll('.file-picker-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            showToast('File picker not implemented in demo', 'warning');
-        });
-    });
+    // Setup file browser functionality
+    setupFileBrowser();
 }
 
 // Initialize form values
 function initializeFormValues() {
-    // Step 1
-    document.getElementById('setup-mode').value = state.mode;
+    // Initialize both Basic and Advanced form values
     document.getElementById('gpu-device').value = state.config.compute.gpu;
     document.getElementById('base-model').value = state.config.model.repo;
+    document.getElementById('download-model').value = 'yes';
+    document.getElementById('precision-mode-basic').value = state.config.model.precision_mode;
+    
+    // Advanced tab values
+    document.getElementById('gpu-device-adv').value = state.config.compute.gpu;
+    document.getElementById('base-model-adv').value = state.config.model.repo;
     document.getElementById('precision-mode').value = state.config.model.precision_mode;
     document.getElementById('dataset-schema').value = state.config.data.schema;
     document.getElementById('file-path').value = state.config.data.raw_path;
@@ -526,6 +710,9 @@ function init() {
     // Initialize UI state
     showStep(1);
     handleDatasetSourceChange();
+    
+    // Apply initial tab state - start with Basic mode
+    handleTabSwitch('basic');
     updateJsonPreview();
     updateCommandPreview();
     validateStep1();
