@@ -320,23 +320,29 @@ function handleDatasetSourceChange() {
 }
 
 function handleTabSwitch(tabName) {
-    console.log('handleTabSwitch called with:', tabName);
+    console.log('Switching to tab:', tabName);
     
-    // Update tab buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    // Direct DOM manipulation - no setTimeout needed
+    const basicTab = document.getElementById('tab-basic');
+    const advancedTab = document.getElementById('tab-advanced');
+    const basicContent = document.getElementById('basic-content');
+    const advancedContent = document.getElementById('advanced-content');
     
-    // Activate selected tab
-    const tabButton = document.getElementById(`tab-${tabName}`);
-    const tabContent = document.getElementById(`${tabName}-content`);
+    console.log('Elements found:', { basicTab, advancedTab, basicContent, advancedContent });
     
-    console.log('Tab elements found:', { tabButton, tabContent });
+    // Remove active from all tabs and content
+    if (basicTab) basicTab.classList.remove('active');
+    if (advancedTab) advancedTab.classList.remove('active');
+    if (basicContent) basicContent.classList.remove('active');
+    if (advancedContent) advancedContent.classList.remove('active');
     
-    if (tabButton && tabContent) {
-        tabButton.classList.add('active');
-        tabContent.classList.add('active');
-    } else {
-        console.error('Tab elements not found for:', tabName);
+    // Activate the selected tab
+    if (tabName === 'basic') {
+        if (basicTab) basicTab.classList.add('active');
+        if (basicContent) basicContent.classList.add('active');
+    } else if (tabName === 'advanced') {
+        if (advancedTab) advancedTab.classList.add('active');
+        if (advancedContent) advancedContent.classList.add('active');
     }
     
     // Update mode indicator
@@ -374,6 +380,7 @@ function handleTabSwitch(tabName) {
     updateCommandPreview();
     
     showToast(`Switched to ${tabName === 'basic' ? 'Basic' : 'Advanced'} mode`);
+    console.log('Tab switch complete');
 }
 
 function setupFileBrowser() {
